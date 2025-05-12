@@ -1,19 +1,16 @@
-// components/QuestionsCompoment/TrueFalseQuiz.tsx
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setAnswer } from "@/store/features/quiz/quizSlice";
-import type { Question } from "@/store/features/quiz/quizSlice";
 import type { RootState, AppDispatch } from "@/store/store";
 import { cn } from "@/lib/utils";
 
 interface TrueFalseQuestionProps {
-  question: Question;
+  question: any;
 }
 
 export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
   question,
 }) => {
-  // only proceed if it's actually a true_false question with answers/options
   if (
     question.questions.type !== "true_false" ||
     !question.question_options ||
@@ -23,44 +20,43 @@ export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
   }
 
   const dispatch = useDispatch<AppDispatch>();
-  const id = question.questions.id;
+  const qid = question.questions.id;
 
-  // read from Redux: user’s current choice & explanation
   const current = useSelector(
     (s: RootState) =>
-      (s.quiz.answers[id] as { choice: string; explanation: string }) ?? {
+      (s.quiz.answers[qid] as { choice: string; explanation: string }) ?? {
         choice: "",
         explanation: "",
       }
   );
 
-  // read from Redux: grading result (boolean) or undefined if not yet submitted
   const result = useSelector(
-    (s: RootState) => s.quiz.results[id]?.[0] as boolean | undefined
+    (s: RootState) => s.quiz.results[qid] as boolean | undefined
   );
 
-  // the correct answer
-  const correct = question.question_answers[0].answer.choice;
-  const options = question.question_options as {
-    question_id: number;
-    value: string;
-  }[];
+  const correctAnswer = question.question_answers[0].answer.choice;
+  const options = question.question_options as { question_id: number; value: string }[];
 
-  const selectChoice = (value: string) =>
+  // Handle the answer selection
+  const selectChoice = (value: string) => {
+    if (current.choice === value) return; // Prevent re-selecting the same answer
     dispatch(
       setAnswer({
-        questionId: id,
+        questionId: qid,
         answer: { ...current, choice: value },
       })
     );
+  };
 
-  const changeExplanation = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+  // Handle explanation change
+  const changeExplanation = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
       setAnswer({
-        questionId: id,
+        questionId: qid,
         answer: { ...current, explanation: e.target.value },
       })
     );
+  };
 
   return (
     <div
@@ -90,9 +86,7 @@ export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
                 (result ? "border-green-500" : "border-red-500")
             )}
           >
-            <span className="inline-block w-5 h-5 mr-2 text-center">
-              {idx + 1}
-            </span>
+            <span className="inline-block w-5 h-5 mr-2 text-center">{idx + 1}</span>
             {opt.value}
           </button>
         ))}
@@ -106,18 +100,18 @@ export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
         rows={3}
       />
 
+      {/* Feedback Section */}
       {result !== undefined && (
         <div
-          className={cn(
-            "font-medium",
-            result ? "text-green-700" : "text-red-700"
-          )}
+          className={cn("font-medium", result ? "text-green-700" : "text-red-700")}
         >
           {result
             ? "✅ Correct!"
-            : `❌ Incorrect. The correct answer is ${correct}.`}
+            : `❌ Incorrect. The correct answer is: ${correctAnswer}`}
         </div>
       )}
     </div>
   );
 };
+
+export default TrueFalseQuestion;

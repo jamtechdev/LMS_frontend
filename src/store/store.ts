@@ -10,7 +10,7 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
     reducer: {
         // example: exampleReducer,
-        quiz: quizReducer,
+        quiz: quizReducer,  
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),

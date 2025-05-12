@@ -11,29 +11,25 @@ interface Props {
 }
 
 export const FillBlankQuiz: React.FC<Props> = ({ question }) => {
-  // guard off any non-fill_blank or missing answers:
-  if (
-    question.questions.type !== "fill_blank" ||
-    !question.question_answers
-  ) {
+  if (question.questions.type !== "fill_blank" || !question.question_answers) {
     return null;
   }
 
   const dispatch = useDispatch<AppDispatch>();
   const id = question.questions.id;
 
-  // grab your array of strings from Redux (initially ["", ""] etc)
+  // Get the current answers from Redux (array of answers)
   const current = useSelector(
     (s: RootState) => (s.quiz.answers[id] as string[]) || []
   );
-  // grab the grading result, e.g. [true,false]
-  const result = useSelector(
-    (s: RootState) => s.quiz.results[id] || []
-  );
+  const result = useSelector((s: RootState) => s.quiz.results[id] || []);
 
-  // now you can safely do question.question_answers[0].answer
+  // The correct answers are stored in question_answers[0].answer
   const correct = question.question_answers[0].answer;
+
+  // Split the content of the question to identify where the blanks are
   const parts = question.questions.content.split(/({{blank_\d+}})/g);
+
   let blankIndex = 0;
 
   const handleChange = (i: number, v: string) => {
@@ -48,7 +44,8 @@ export const FillBlankQuiz: React.FC<Props> = ({ question }) => {
         {parts.map((part, i) => {
           if (/{{blank_\d+}}/.test(part)) {
             const idx = blankIndex++;
-            const isCorrect = result[idx];
+            const isCorrect = result[idx]; // Check if this blank is correct
+            console.log(isCorrect);
 
             return (
               <input
@@ -59,9 +56,9 @@ export const FillBlankQuiz: React.FC<Props> = ({ question }) => {
                 className={cn(
                   "w-20 px-2 py-1 border rounded",
                   isCorrect === true
-                    ? "border-green-500"
+                    ? "bg-green-500"
                     : isCorrect === false
-                    ? "border-red-500"
+                    ? "bg-red-500"
                     : "border-gray-300"
                 )}
               />

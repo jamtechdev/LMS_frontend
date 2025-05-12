@@ -7,6 +7,10 @@ import { loadQuestions, submitAll } from "@/store/features/quiz/quizSlice";
 import { FillBlankQuiz } from "@/components/QuestionsCompoment/FillBlankQuiz";
 import { TrueFalseQuestion } from "@/components/QuestionsCompoment/TrueFalseQuiz";
 
+import { RearrangeClickQuestion } from "../QuestionsCompoment/RearrangeClickQuestion";
+import { LinkingQuestion } from "../QuestionsCompoment/LinkingQuestion";
+import MCQQuestion from "../QuestionsCompoment/MCQQuestion";
+
 interface QuizProps {
   data: any[];
 }
@@ -21,7 +25,7 @@ const Quiz: React.FC<QuizProps> = ({ data }) => {
   }, [data, dispatch]);
 
   return (
-    <div className="space-y-8"> 
+    <div className="space-y-8">
       {questions.map((q, idx) => (
         <div key={q.questions.id}>
           <h3 className="text-xl font-bold mb-2">Question {idx + 1}</h3>
@@ -32,7 +36,15 @@ const Quiz: React.FC<QuizProps> = ({ data }) => {
               case "fill_blank":
                 return <FillBlankQuiz key={q.questions.id} question={q} />;
               case "true_false":
-                return <TrueFalseQuestion question={q} />;
+                return <TrueFalseQuestion key={q.questions.id} question={q} />;
+              case "rearrange":
+                return (
+                  <RearrangeClickQuestion key={q.questions.id} question={q} />
+                );
+              case "linking":
+                return <LinkingQuestion key={q.questions.id} question={q} />;
+              case "mcq":
+                return <MCQQuestion key={q.questions.id} question={q} />;
               default:
                 return null;
             }

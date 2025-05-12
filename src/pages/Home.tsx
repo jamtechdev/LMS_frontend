@@ -1,7 +1,5 @@
 import Navbar from "@/components/Navbar/Navbar";
-import { FillBlankQuiz } from "@/components/QuestionsCompoment/FillBlankQuiz";
 import Quiz from "@/components/Quiz/Quiz";
-import React from "react";
 
 export default function Home() {
   const QuestionArray = [
@@ -30,21 +28,11 @@ export default function Home() {
       question_answers: [
         {
           question_id: 2,
-          answer: "Paris",
+          answer: ["Paris"],
           format: "text",
         },
       ],
     },
-    // {
-    //   questions: {
-    //     id: 3,
-    //     type: "spelling",
-    //     content: "The qwik brown fox jmps over the lazi dog.",
-    //     metadata: {
-    //       correction_targets: ["qwik", "jmps", "lazi"],
-    //     },
-    //   },
-    // },
     {
       questions: {
         id: 4,
@@ -82,7 +70,44 @@ export default function Home() {
       question_answers: [
         {
           question_id: 5,
-          answer: { A1: "B1", A2: "B2" },
+          answer: [
+            {
+              left: {
+                image_uri: "",
+                word: "Cat",
+                type: "word",
+              },
+              right: {
+                image_uri: "",
+                word: "soft, small, furry",
+                type: "word",
+              },
+            },
+            {
+              left: {
+                image_uri: "",
+                word: "Car",
+                type: "word",
+              },
+              right: {
+                image_uri: "",
+                word: "fast, shiny, loud",
+                type: "word",
+              },
+            },
+            {
+              left: {
+                word: "Chair",
+                type: "word",
+                image_uri: "",
+              },
+              right: {
+                word: "wooden, four legs, seat",
+                type: "word",
+                image_uri: "",
+              },
+            },
+          ],
           format: "mapping",
         },
       ],

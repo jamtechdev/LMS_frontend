@@ -1,4 +1,5 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type QuestionType =
     | "fill_blank"
@@ -22,10 +23,8 @@ export interface Question {
 
 export interface QuizState {
     questions: Question[];
-    // answers keyed by question ID
     answers: Record<number, any>;
-    // grading results keyed by question ID: an array of booleans (one per blank / sub-part)
-    results: Record<number, boolean[]>;
+    results: Record<number, boolean[] | boolean>;
     score: number | null;
 }
 
@@ -45,67 +44,48 @@ const quizSlice = createSlice({
             state.answers = {};
             state.results = {};
             state.score = null;
+
             action.payload.forEach((q) => {
-                // initialize empty answers
-                if (q.questions.type === "fill_blank") {
-                    const ans = q.question_answers![0].answer;
-                    state.answers[q.questions.id] = Array.isArray(ans)
-                        ? new Array(ans.length).fill("")
-                        : [""];
-                } else if (q.questions.type === "true_false") {
-                    state.answers[q.questions.id] = {
-                        choice: "",
-                        explanation: "",
-                    };
-                } else {
-                 
-                    state.answers[q.questions.id] = null;
+                const id = q.questions.id;
+                switch (q.questions.type) {
+                    case "true_false":
+                        state.answers[id] = { choice: "", explanation: "" };
+                        break;
+                    default:
+                        state.answers[id] = null;
                 }
             });
         },
 
-        // for fill_blank: payload.answer is string[]
-        // for true_false: payload.answer is { choice, explanation }
         setAnswer(
             state,
             action: PayloadAction<{ questionId: number; answer: any }>
         ) {
-            state.answers[action.payload.questionId] = action.payload.answer;
+            const { questionId, answer } = action.payload;
+            state.answers[questionId] = answer;
+
+            const q = state.questions.find((q) => q.questions.id === questionId);
+            if (!q) return;
+
+            // Handle true/false type question
+            if (q.questions.type === "true_false") {
+                const correctAnswer = q.question_answers[0].answer.choice;
+                state.results[questionId] = answer.choice === correctAnswer;
+            }
         },
 
-        // grade all loaded questions
         submitAll(state) {
-            let correctCount = 0;
-
+            let score = 0;
             state.questions.forEach((q) => {
-                const qid = q.questions.id;
-                const userAns = state.answers[qid];
-                let result: boolean[] = [];
-
-                if (q.questions.type === "fill_blank") {
-                    const correct = Array.isArray(q.question_answers![0].answer)
-                        ? q.question_answers![0].answer
-                        : [q.question_answers![0].answer];
-
-                    result = correct.map((corr: any, i: any) => {
-                        const ans = (userAns as string[])[i] || "";
-                        return ans.trim().toLowerCase() === corr.trim().toLowerCase();
-                    });
-
-                } else if (q.questions.type === "true_false") {
-                    const corr = q.question_answers![0].answer.choice;
-                    const isOk = (userAns as any).choice === corr;
-                    result = [isOk];
-                } else {
-                    // default no-op
-                    result = [false];
+                const id = q.questions.id;
+                const res = state.results[id] || [];
+                if (Array.isArray(res)) {
+                    if (res.every((r) => r)) score++;
+                } else if (res) {
+                    score++;
                 }
-
-                state.results[qid] = result;
-                if (result.every((r) => r)) correctCount += 1;
             });
-
-            state.score = correctCount;
+            state.score = score;
         },
     },
 });
