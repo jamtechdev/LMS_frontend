@@ -1,14 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+// quizSlice.ts
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export type QuestionType =
-    | "fill_blank"
-    | "spelling"
-    | "rearrange"
-    | "linking"
-    | "true_false"
-    | "mcq"
-    | "image_mcq";
+export type QuestionType = "fill_blank" | "spelling" | "rearrange" | "linking" | "true_false" | "mcq" | "image_mcq";
 
 export interface Question {
     questions: {
@@ -44,7 +37,6 @@ const quizSlice = createSlice({
             state.answers = {};
             state.results = {};
             state.score = null;
-
             action.payload.forEach((q) => {
                 const id = q.questions.id;
                 switch (q.questions.type) {
@@ -57,20 +49,25 @@ const quizSlice = createSlice({
             });
         },
 
-        setAnswer(
-            state,
-            action: PayloadAction<{ questionId: number; answer: any }>
-        ) {
+        setAnswer(state, action: PayloadAction<{ questionId: number; answer: any }>) {
             const { questionId, answer } = action.payload;
             state.answers[questionId] = answer;
 
             const q = state.questions.find((q) => q.questions.id === questionId);
             if (!q) return;
 
-            // Handle true/false type question
+            // ✅ Check for correct true_false answer
             if (q.questions.type === "true_false") {
-                const correctAnswer = q.question_answers[0].answer.choice;
+                const correctAnswer = q.question_answers?.[0]?.answer?.choice;
                 state.results[questionId] = answer.choice === correctAnswer;
+            }
+
+            // Existing fill_blank logic
+            if (q.questions.type === "fill_blank") {
+                const correctAnswers = q.question_answers?.[0]?.answer || [];
+                state.results[questionId] = correctAnswers.map((correctAnswer: any, index: any) => {
+                    return correctAnswer.toLowerCase() === answer[index]?.toLowerCase();
+                });
             }
         },
 
@@ -80,9 +77,9 @@ const quizSlice = createSlice({
                 const id = q.questions.id;
                 const res = state.results[id] || [];
                 if (Array.isArray(res)) {
-                    if (res.every((r) => r)) score++;
+                    if (res.every((r) => r)) score++; // All blanks correct
                 } else if (res) {
-                    score++;
+                    score++; // Single correct answer
                 }
             });
             state.score = score;
@@ -92,3 +89,4 @@ const quizSlice = createSlice({
 
 export const { loadQuestions, setAnswer, submitAll } = quizSlice.actions;
 export default quizSlice.reducer;
+

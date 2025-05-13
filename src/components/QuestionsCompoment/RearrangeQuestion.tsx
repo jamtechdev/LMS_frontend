@@ -1,10 +1,6 @@
 // components/QuestionsCompoment/RearrangeQuestion.tsx
 import React, { useEffect, useState } from "react";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-} from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import type { DropResult } from "@hello-pangea/dnd";
 import { useSelector, useDispatch } from "react-redux";
 import { setAnswer } from "@/store/features/quiz/quizSlice";
@@ -35,8 +31,7 @@ const RearrangeQuestion: React.FC<Props> = ({ question }) => {
   const qid = question.questions.id;
 
   // the correct target sequence
-  const correctOrder = question.question_answers[0]
-    .answer as string[];
+  const correctOrder = question.question_answers[0].answer as string[];
 
   // any previously‐saved order in Redux
   const reduxOrder = useSelector(
@@ -54,9 +49,7 @@ const RearrangeQuestion: React.FC<Props> = ({ question }) => {
   const [items, setItems] = useState<Item[]>(
     reduxOrder.length > 0
       ? buildItems(reduxOrder)
-      : buildItems(
-          question.question_options.map((opt) => opt.value)
-        )
+      : buildItems(question.question_options.map((opt) => opt.value))
   );
 
   // initialize Redux if empty
@@ -87,18 +80,14 @@ const RearrangeQuestion: React.FC<Props> = ({ question }) => {
   };
 
   // grading results from Redux (if submitAll has run)
-  const result = useSelector(
-    (s: RootState) => s.quiz.results[qid] || []
-  );
+  const result = useSelector((s: RootState) => s.quiz.results[qid] || []);
   const fullyCorrect =
-    result.length === correctOrder.length &&
-    result.every((b) => b);
+    result.length === correctOrder.length && result.every((b) => b);
 
   return (
     <div
       className={cn(
         "p-4 rounded-md border",
-        // grey if ungraded, green if entirely correct, red if graded wrong
         result.length === 0
           ? "border-gray-200"
           : fullyCorrect
@@ -106,9 +95,7 @@ const RearrangeQuestion: React.FC<Props> = ({ question }) => {
           : "border-red-500 bg-red-50"
       )}
     >
-      <div className="font-semibold mb-4">
-        {question.questions.content}
-      </div>
+      <div className="font-semibold mb-4">{question.questions.content}</div>
 
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable
@@ -123,9 +110,7 @@ const RearrangeQuestion: React.FC<Props> = ({ question }) => {
               className="flex flex-wrap gap-2 mb-4"
             >
               {items.map((item, idx) => {
-                // highlight green if this word is in the correct slot
-                const inPlace =
-                  item.value === correctOrder[idx];
+                const inPlace = item.value === correctOrder[idx];
 
                 return (
                   <Draggable
@@ -144,11 +129,11 @@ const RearrangeQuestion: React.FC<Props> = ({ question }) => {
                           // while dragging, show the drag style
                           snap.isDragging
                             ? "bg-blue-50 border-blue-300"
-                            // otherwise, if in correct place → green
-                            : inPlace
+                            : // otherwise, if in correct place → green
+                            inPlace
                             ? "bg-green-50 border-green-500"
-                            // default look
-                            : "bg-white border-gray-200"
+                            : // default look
+                              "bg-white border-gray-200"
                         )}
                       >
                         {item.value}
@@ -162,8 +147,6 @@ const RearrangeQuestion: React.FC<Props> = ({ question }) => {
           )}
         </Droppable>
       </DragDropContext>
-
-      {/* final result message */}
       {result.length > 0 && (
         <div className="font-medium">
           {fullyCorrect ? (

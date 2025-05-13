@@ -35,6 +35,22 @@ export default function Home() {
     },
     {
       questions: {
+        id: 3,
+        type: "fill_blank",
+        content: "The capital of India is {{blank_1}}.",
+        img_url: "https://flagcdn.com/w320/in.png",
+        metadata: null,
+      },
+      question_answers: [
+        {
+          question_id: 3,
+          answer: ["Delhi"],
+          format: "text",
+        },
+      ],
+    },
+    {
+      questions: {
         id: 4,
         type: "rearrange",
         content: "Rearrange to form a sentence.",
@@ -61,56 +77,45 @@ export default function Home() {
         content: "Match the animals to their sounds.",
         metadata: null,
       },
-      question_options: [
-        { question_id: 5, label: "A1", value: "Dog" },
-        { question_id: 5, label: "B1", value: "Bark" },
-        { question_id: 5, label: "A2", value: "Cat" },
-        { question_id: 5, label: "B2", value: "Meow" },
-      ],
-      question_answers: [
+      answer: [
         {
-          question_id: 5,
-          answer: [
-            {
-              left: {
-                image_uri: "",
-                word: "Cat",
-                type: "word",
-              },
-              right: {
-                image_uri: "",
-                word: "soft, small, furry",
-                type: "word",
-              },
-            },
-            {
-              left: {
-                image_uri: "",
-                word: "Car",
-                type: "word",
-              },
-              right: {
-                image_uri: "",
-                word: "fast, shiny, loud",
-                type: "word",
-              },
-            },
-            {
-              left: {
-                word: "Chair",
-                type: "word",
-                image_uri: "",
-              },
-              right: {
-                word: "wooden, four legs, seat",
-                type: "word",
-                image_uri: "",
-              },
-            },
-          ],
-          format: "mapping",
+          left: {
+            image_uri: "",
+            word: "Cat",
+            type: "word",
+          },
+          right: {
+            image_uri: "",
+            word: "soft, small, furry",
+            type: "word",
+          },
+        },
+        {
+          left: {
+            image_uri: "",
+            word: "Car",
+            type: "word",
+          },
+          right: {
+            image_uri: "",
+            word: "fast, shiny, loud",
+            type: "word",
+          },
+        },
+        {
+          left: {
+            word: "Chair",
+            type: "word",
+            image_uri: "",
+          },
+          right: {
+            word: "wooden, four legs, seat",
+            type: "word",
+            image_uri: "",
+          },
         },
       ],
+      format: "mapping",
     },
     {
       questions: {
@@ -146,6 +151,13 @@ export default function Home() {
         { question_id: 9, value: "Whale", is_correct: true },
         { question_id: 9, value: "Frog", is_correct: false },
       ],
+      question_answers: [
+        {
+          question_id: 9,
+          answer: "Whale",
+          format: "text",
+        },
+      ],
     },
     {
       questions: {
@@ -155,8 +167,73 @@ export default function Home() {
         metadata: null,
       },
       question_options: [
-        { question_id: 10, value: "url_to_triangle.jpg", is_correct: true },
-        { question_id: 10, value: "url_to_square.jpg", is_correct: false },
+        {
+          question_id: 10,
+          value:
+            "https://w7.pngwing.com/pngs/572/973/png-transparent-red-triangle-right-triangle-red-triangle-angle-photography-triangle-thumbnail.png",
+          is_correct: true,
+        },
+        {
+          question_id: 10,
+          value:
+            "https://www.shutterstock.com/image-vector/rectangular-square-shape-260nw-1112551052.jpg",
+          is_correct: false,
+        },
+      ],
+      question_answers: [
+        {
+          question_id: 10,
+          answer:
+            "https://w7.pngwing.com/pngs/572/973/png-transparent-red-triangle-right-triangle-red-triangle-angle-photography-triangle-thumbnail.png",
+          format: "text",
+        },
+      ],
+    },
+    {
+      questions: {
+        id: 11,
+        type: "comprehension",
+        passage: "Once upon a time, a lion was sleeping...",
+        sub_questions: [
+          {
+            id: 1,
+            type: "mcq",
+            content: "Why was the lion angry?",
+            options: [
+              { value: "Because he was hungry", is_correct: true },
+              { value: "Because he was tired", is_correct: false },
+            ],
+            answer: {
+              answer: "Because he was hungry",
+              format: "text",
+            },
+          },
+          {
+            id: 2,
+            type: "fill_blank",
+            content: "The mouse promised to {{blank_1}} the lion.",
+            answer: {
+              answer: "help",
+              format: "text",
+            },
+          },
+        ],
+      },
+    },
+    {
+      questions: {
+        id: 12,
+        type: "fill_blank",
+        content: "There are {{blank_1}} fish in Tank B.",
+        img_url: "https://pitaya.com.sg/media/2022/1008/41566.png",
+        metadata: null,
+      },
+      question_answers: [
+        {
+          question_id: 10,
+          answer: ["5"],
+          format: "text",
+        },
       ],
     },
   ];
@@ -180,8 +257,25 @@ export default function Home() {
         ]}
         showNavigation={false}
       />
-      <div className="mt-10 p-5">
-        <Quiz data={QuestionArray} />
+      <div
+        className=""
+        style={{
+          backgroundImage:
+            "url('https://img.freepik.com/free-psd/gradient-waves-border-design_23-2150756123.jpg')",
+          // backgroundSize: "contain",
+          backgroundRepeat: "repeat-x",
+        }}
+      >
+        <div
+          className=" p-5 w-[900px] justify-center align-center m-auto"
+          style={{
+            backgroundImage: "url('../assets/images/top-Photoroom.png')",
+            // backgroundSize: "contain",
+            backgroundRepeat: "repeat-x",
+          }}
+        >
+          <Quiz data={QuestionArray} />
+        </div>
       </div>
     </>
   );

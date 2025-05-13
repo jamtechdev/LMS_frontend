@@ -10,6 +10,8 @@ import { TrueFalseQuestion } from "@/components/QuestionsCompoment/TrueFalseQuiz
 import { RearrangeClickQuestion } from "../QuestionsCompoment/RearrangeClickQuestion";
 import { LinkingQuestion } from "../QuestionsCompoment/LinkingQuestion";
 import MCQQuestion from "../QuestionsCompoment/MCQQuestion";
+import ComprehensionQuiz from "../QuestionsCompoment/ComprehensionQuiz";
+import ImageMCQQuestion from "../QuestionsCompoment/ImageMCQQuestion";
 
 interface QuizProps {
   data: any[];
@@ -45,6 +47,10 @@ const Quiz: React.FC<QuizProps> = ({ data }) => {
                 return <LinkingQuestion key={q.questions.id} question={q} />;
               case "mcq":
                 return <MCQQuestion key={q.questions.id} question={q} />;
+              case "comprehension":
+                return <ComprehensionQuiz key={q.questions.id} question={q} />;
+              case "image_mcq":
+                return <ImageMCQQuestion key={q.questions.id} question={q} />;
               default:
                 return null;
             }
